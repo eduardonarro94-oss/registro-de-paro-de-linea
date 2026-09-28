@@ -1,701 +1,1554 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Paro de Línea - F-BX-CAL-61-01 Rev. D</title>
-  
+  <title>Paro de Línea Digital Flex | F-BX-CAL-61-01 Rev. D</title>
+  <meta name="description" content="Sistema de captura digital y por voz de paros de línea para manufactura electrónica Flex">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Custom CSS & Print Styles -->
-  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            flex: {
+              blue: '#005696',
+              blueDark: '#003e6d',
+              blueLight: '#e6f0fa',
+              cyan: '#00A3E0',
+              green: '#78BE20'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- jsPDF & AutoTable CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- SheetJS (XLSX) CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 antialiased pb-12">
+<body class="min-h-full flex flex-col bg-slate-50 dark:bg-[#0b1329] text-slate-900 dark:text-slate-100 antialiased transition-colors duration-200">
 
-  <!-- ENCABEZADO Y BARRA DE NAVEGACIÓN PRINCIPAL -->
-  <header class="bg-slate-900 text-white border-b border-slate-700 sticky top-0 z-50 shadow-md no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div class="flex items-center space-x-3">
-        <div class="p-2 bg-blue-600 rounded-lg shadow">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-          </svg>
+  <!-- ======================================================== -->
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR / HEADER CORPORATIVO FLEX   -->
+  <!-- ======================================================== -->
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR EMPRESARIAL FLEX (6 TABS)   -->
+  <!-- ======================================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#131f37]/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-2">
+        
+        <!-- Logo Corporativo Flex & Título Oficial -->
+        <div class="flex items-center gap-2.5 flex-shrink-0">
+          <img src="assets/logo-flex.svg" alt="Flex Logo" class="h-8 sm:h-9 w-auto">
+          <div class="hidden lg:block border-l border-slate-300 dark:border-slate-700 pl-3">
+            <h1 class="text-xs sm:text-sm font-black tracking-tight text-flex-blue dark:text-sky-400 uppercase">Paro de Línea Digital</h1>
+            <p class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">F-BX-CAL-61-01 Rev. D • Audit Control</p>
+          </div>
         </div>
-        <div>
-          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-            Registro de Paro de Línea
-            <span class="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30">F-BX-CAL-61-01 Rev. D</span>
-          </h1>
-          <p class="text-xs text-slate-400">Control de Calidad & Operaciones • Fecha de Emisión: Enero 06, 2026</p>
+
+        <!-- Pestañas Principales (6 Opciones Funcionales de 1 Clic) -->
+        <nav id="main-nav-tabs" class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-1 flex-1 justify-center sm:justify-start lg:justify-center">
+          
+          <!-- 1. Captura -->
+          <button type="button" data-target="tab-registro" onclick="window.flexApp.switchTab('tab-registro')" class="nav-tab-btn nav-tab-active px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm rounded-xl font-bold flex items-center gap-1.5 whitespace-nowrap transition-all" title="Captura de Paro de Línea">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Captura</span>
+          </button>
+
+          <!-- 2. Dashboard -->
+          <button type="button" data-target="tab-dashboard" onclick="window.flexApp.switchTab('tab-dashboard')" class="nav-tab-btn nav-tab-inactive px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm rounded-xl font-semibold flex items-center gap-1.5 whitespace-nowrap transition-all" title="Tablero de Indicadores y KPIs">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Dashboard</span>
+          </button>
+
+          <!-- 3. Historial -->
+          <button type="button" data-target="tab-historial" onclick="window.flexApp.switchTab('tab-historial')" class="nav-tab-btn nav-tab-inactive px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm rounded-xl font-semibold flex items-center gap-1.5 whitespace-nowrap transition-all" title="Historial y Auditoría de Paros">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Historial</span>
+          </button>
+
+          <!-- 4. Asistente IA -->
+          <button type="button" data-target="tab-ia" onclick="window.flexApp.switchTab('tab-ia')" class="nav-tab-btn nav-tab-inactive px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm rounded-xl font-semibold flex items-center gap-1.5 whitespace-nowrap transition-all" title="Inteligencia Artificial y Diagnóstico">
+            <i class="fa-solid fa-wand-magic-sparkles text-purple-500"></i>
+            <span>Asistente IA</span>
+          </button>
+
+          <!-- 5. Nuevo (Acción Directa en 1 Clic) -->
+          <button type="button" id="btn-new-registration" data-target="action-nuevo" onclick="window.flexApp.startNewRegistration()" class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm flex items-center gap-1.5 whitespace-nowrap active:scale-95 transition-all" title="Nuevo Folio y Reiniciar Cronómetro (1 clic)">
+            <i class="fa-solid fa-circle-plus"></i>
+            <span>Nuevo</span>
+          </button>
+
+          <!-- 6. Configuración -->
+          <button type="button" data-target="tab-configuracion" onclick="window.flexApp.switchTab('tab-configuracion')" class="nav-tab-btn nav-tab-inactive px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm rounded-xl font-semibold flex items-center gap-1.5 whitespace-nowrap transition-all" title="Configuración de Usuarios, Correos y Rutas">
+            <i class="fa-solid fa-gear"></i>
+            <span>Configuración</span>
+          </button>
+
+        </nav>
+
+        <!-- Herramientas Rápidas (Modo Oscuro/Claro) -->
+        <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+          <button id="theme-toggle-btn" class="p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Cambiar Tema Oscuro/Claro">
+            <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+          </button>
         </div>
-      </div>
 
-      <!-- BOTONES DE ACCIÓN RÁPIDA -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button id="btn-save" type="button" class="inline-flex items-center px-3.5 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-colors">
-          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-          </svg>
-          Guardar Registro
-        </button>
-
-        <button id="btn-load" type="button" class="inline-flex items-center px-3 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
-          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-          </svg>
-          Cargar Borrador
-        </button>
-
-        <button id="btn-print" type="button" class="inline-flex items-center px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow transition-colors">
-          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-          </svg>
-          Imprimir / Guardar PDF
-        </button>
-
-        <button id="btn-clear-all" type="button" class="inline-flex items-center px-3 py-2 text-xs font-medium rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 transition-colors">
-          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-          </svg>
-          Limpiar Formulario
-        </button>
       </div>
     </div>
   </header>
 
-  <!-- ENCABEZADO EXCLUSIVO PARA IMPRESIÓN PDF -->
-  <div class="hidden print-only p-4 border-b-2 border-slate-900 mb-4">
-    <div class="flex justify-between items-center">
-      <div>
-        <h1 class="text-xl font-bold text-slate-900 uppercase tracking-tight">Registro de Paro de Línea</h1>
-        <p class="text-xs text-slate-600 font-mono">Sistema de Gestión de Calidad Industrial</p>
-      </div>
-      <div class="text-right font-mono text-xs">
-        <p class="font-bold">Código: F-BX-CAL-61-01 Rev. D</p>
-        <p>Vigencia: Enero 06, 2026</p>
-      </div>
-    </div>
-  </div>
+  <!-- ======================================================== -->
+  <!-- CONTENIDO PRINCIPAL: 4 PESTAÑAS (SPA)                    -->
+  <!-- ======================================================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+    <!-- ====================================================== -->
+    <!-- TAB 1: REGISTRO Y CAPTURA DIGITAL DE PARO DE LÍNEA     -->
+    <!-- ====================================================== -->
+    <section id="tab-registro" class="tab-content space-y-6">
 
-    <!-- SECCIÓN 1: DATOS GENERALES Y TIEMPO DE PARO -->
-    <section class="industrial-card overflow-hidden">
-      <div class="bg-slate-800 text-white px-5 py-3 flex items-center justify-between border-b border-slate-700">
-        <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-          Sección 1: Datos Generales y Tiempo de Paro
-        </h2>
-        <span id="downtime_badge" class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-700 text-slate-300">
-          Sin datos
-        </span>
-      </div>
-
-      <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-          <label for="fecha" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Fecha</label>
-          <input type="date" id="fecha" class="w-full">
+      <!-- SELECTOR DE MODOS DE CAPTURA (MODO 1: VOZ / MODO 2: MANUAL) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-white dark:bg-[#131f37] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-sliders text-flex-blue dark:text-sky-400"></i>
+            <span>Modo de Captura:</span>
+          </span>
+          <div class="inline-flex rounded-xl p-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <button type="button" id="btn-mode-voice" onclick="window.flexApp.setCaptureMode('voice')" class="btn-mode-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#005696] text-white shadow flex items-center gap-1.5 transition-all">
+              <i class="fa-solid fa-microphone"></i>
+              <span>Modo 1: Voz</span>
+            </button>
+            <button type="button" id="btn-mode-manual" onclick="window.flexApp.setCaptureMode('manual')" class="btn-mode-btn px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 transition-all">
+              <i class="fa-solid fa-keyboard"></i>
+              <span>Modo 2: Manual</span>
+            </button>
+          </div>
         </div>
 
-        <div>
-          <label for="turno" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Turno</label>
-          <select id="turno" class="w-full">
-            <option value="">Seleccione Turno</option>
-            <option value="1">Turno 1 (Matutino: 06:00 - 15:30)</option>
-            <option value="2">Turno 2 (Vespertino: 15:30 - 23:30)</option>
-            <option value="3">Turno 3 (Nocturno: 23:30 - 06:00)</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="linea_proceso" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Línea / Proceso</label>
-          <input type="text" id="linea_proceso" placeholder="Ej. SMT Línea 02 / Ensamble Final" class="w-full">
-        </div>
-
-        <div>
-          <label for="cliente_ensamble" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Cliente / Ensamble</label>
-          <input type="text" id="cliente_ensamble" placeholder="Ej. Cliente XYZ / Modelo A-200" class="w-full">
-        </div>
-
-        <div>
-          <label for="originador_paro" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Originador del Paro</label>
-          <input type="text" id="originador_paro" placeholder="Nombre de quien reporta" class="w-full">
-        </div>
-
-        <div>
-          <label for="folio_flex_audit" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Folio Flex Audit Control</label>
-          <input type="text" id="folio_flex_audit" placeholder="Ej. AUD-2026-089" class="w-full font-mono-code">
+        <!-- Indicador de Borradores y Acciones Rápidas -->
+        <div class="flex items-center gap-2">
+          <span id="draft-status-indicator" class="text-[11px] text-slate-400 flex items-center gap-1">
+            <i class="fa-regular fa-floppy-disk"></i>
+            <span id="draft-status-text">Listo para capturar</span>
+          </span>
+          <button type="button" id="btn-quick-draft" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors" title="Guardar borrador para continuar después">
+            <i class="fa-solid fa-floppy-disk text-flex-blue dark:text-sky-400"></i>
+            <span>Guardar Borrador</span>
+          </button>
+          <button type="button" id="btn-load-draft" class="hidden px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-300 dark:border-amber-800 flex items-center gap-1.5 transition-colors" title="Restaurar el último borrador guardado">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            <span>Restaurar Borrador</span>
+          </button>
         </div>
       </div>
 
-      <!-- RECUADRO DE ENTRADAS DE TIEMPO Y CÁLCULO AUTOMÁTICO -->
-      <div class="mx-5 mb-5 p-4 bg-slate-50 rounded-lg border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-red-100 text-red-600 rounded-md">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <div class="w-full">
-            <label for="hora_paro" class="block text-xs font-bold text-slate-700 uppercase">Hora de Paro</label>
-            <input type="time" id="hora_paro" class="w-full mt-1">
-          </div>
-        </div>
+      <!-- BANNER DE CAPTURA RÁPIDA POR VOZ (< 3 MINUTOS) -->
+      <div id="voice-capture-banner" class="bg-gradient-to-r from-[#005696] to-[#0080D0] text-white rounded-2xl p-4 sm:p-6 shadow-md relative overflow-hidden transition-all duration-300">
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+          
+          <div class="flex items-center gap-4 text-center md:text-left">
+            <!-- Botón Grande de Micrófono con Pulso -->
+            <button id="mic-main-btn" class="mic-pulse-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white text-flex-blue flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-transform flex-shrink-0" title="Haz clic para iniciar dictado por voz">
+              <i class="fa-solid fa-microphone text-2xl sm:text-3xl"></i>
+            </button>
 
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-emerald-100 text-emerald-600 rounded-md">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <div class="w-full">
-            <label for="hora_arranque" class="block text-xs font-bold text-slate-700 uppercase">Hora de Arranque</label>
-            <input type="time" id="hora_arranque" class="w-full mt-1">
-          </div>
-        </div>
-
-        <!-- RESULTADO CÁLCULO DE MINUTOS SIN PRODUCIR -->
-        <div class="bg-slate-900 text-white p-3 rounded-lg flex items-center justify-between border border-slate-800">
-          <div>
-            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Minutos Totales Sin Producir</p>
-            <p id="tiempo_formateado_display" class="text-xs text-slate-300 font-medium">Ingrese ambas horas</p>
-          </div>
-          <div class="text-right">
-            <span id="total_minutos_display" class="text-2xl font-extrabold text-amber-400 font-mono-code">0</span>
-            <span class="text-xs font-semibold text-slate-400">min</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 2: DESCRIPCIÓN DE DISCREPANCIA (5W2H) -->
-    <section class="industrial-card overflow-hidden">
-      <div class="bg-slate-800 text-white px-5 py-3 flex items-center justify-between border-b border-slate-700">
-        <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-          Sección 2: Descripción de Discrepancia (Metodología 5W2H)
-        </h2>
-        <span class="text-xs text-slate-400 font-mono">Metodología Estándar de Análisis</span>
-      </div>
-
-      <div class="p-5 space-y-4">
-        <!-- GRID DE ENTRADAS 5W2H -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="lg:col-span-2">
-            <label for="5w2h_what" class="block text-xs font-bold text-indigo-950 uppercase mb-1">
-              What (¿Qué pasó?) - Descripción detallada del defecto
-            </label>
-            <textarea id="5w2h_what" rows="2" placeholder="Describa claramente la falla o discrepancia detectada..." class="w-full"></textarea>
-          </div>
-
-          <div>
-            <label for="5w2h_where" class="block text-xs font-bold text-indigo-950 uppercase mb-1">
-              Where (¿Dónde ocurrió?) - Estación o módulo
-            </label>
-            <input type="text" id="5w2h_where" placeholder="Estación 04 / Inserción SMT" class="w-full">
-          </div>
-
-          <div>
-            <label for="5w2h_who" class="block text-xs font-bold text-indigo-950 uppercase mb-1">
-              Who (¿Quién?) - Detectado por / Operador
-            </label>
-            <input type="text" id="5w2h_who" placeholder="Inspector Calidad / Operador" class="w-full">
-          </div>
-
-          <div>
-            <label for="5w2h_when" class="block text-xs font-bold text-indigo-950 uppercase mb-1">
-              When (¿Cuándo?) - Momento o lote específico
-            </label>
-            <input type="text" id="5w2h_when" placeholder="Lote #4021 / Inicio de turno" class="w-full">
-          </div>
-
-          <div>
-            <label for="5w2h_how_many" class="block text-xs font-bold text-indigo-950 uppercase mb-1">
-              How Many (¿Cuánto?) - Cantidad afectada
-            </label>
-            <input type="text" id="5w2h_how_many" placeholder="15 pzas rechazadas / 200 en riesgo" class="w-full">
-          </div>
-
-          <div class="lg:col-span-2">
-            <label for="5w2h_why" class="block text-xs font-bold text-indigo-950 uppercase mb-1">
-              Why (¿Por qué es problema?) - Impacto en especificación / producto
-            </label>
-            <input type="text" id="5w2h_why" placeholder="Incumplimiento IPC-A-610 / Genera falla funcional" class="w-full">
-          </div>
-
-          <div>
-            <label for="5w2h_how" class="block text-xs font-bold text-indigo-950 uppercase mb-1">
-              How (¿Cómo afecta o cómo se detectó?)
-            </label>
-            <input type="text" id="5w2h_how" placeholder="Visual en AOI / Prueba funcional ICT" class="w-full">
-          </div>
-        </div>
-
-        <!-- CAMPOS COMPLEMENTARIOS TéCNICOS -->
-        <div class="pt-4 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label for="no_parte" class="block text-xs font-semibold text-slate-600 uppercase mb-1">No. de Parte</label>
-            <input type="text" id="no_parte" placeholder="PN-998877-A" class="w-full font-mono">
-          </div>
-
-          <div>
-            <label for="no_doc_rev" class="block text-xs font-semibold text-slate-600 uppercase mb-1">No. Documento / Rev</label>
-            <input type="text" id="no_doc_rev" placeholder="DOC-0123 Rev. C" class="w-full font-mono">
-          </div>
-
-          <div>
-            <label for="no_series" class="block text-xs font-semibold text-slate-600 uppercase mb-1">No. de Serie(s)</label>
-            <input type="text" id="no_series" placeholder="SN: 001 al 015" class="w-full font-mono">
-          </div>
-
-          <div>
-            <label for="no_contenedor_otros" class="block text-xs font-semibold text-slate-600 uppercase mb-1">No. Contenedor / Otros</label>
-            <input type="text" id="no_contenedor_otros" placeholder="Rack 05 / Cuestionario #12" class="w-full">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 3: CONTENCIÓN Y PURGAS (BX-CAL-72) -->
-    <section class="industrial-card overflow-hidden">
-      <div class="bg-slate-800 text-white px-5 py-3 flex items-center justify-between border-b border-slate-700">
-        <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-          Sección 3: Contención y Purgas (Procedimiento BX-CAL-72)
-        </h2>
-        <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">BX-CAL-72</span>
-      </div>
-
-      <div class="p-5 space-y-5">
-        <!-- ADVERTENCIA VISUAL OBLIGATORIA DE PURGA -->
-        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-md">
-          <div class="flex items-start">
-            <div class="flex-shrink-0 text-amber-600">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-              </svg>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-xs font-bold text-amber-900 uppercase">Advertencia de Procedimiento Obligatorio</h3>
-              <p class="text-xs text-amber-800 mt-0.5">
-                De acuerdo con la norma <strong>BX-CAL-72</strong>, al declararse un paro de línea es estrictamente obligatorio ejecutar la purga física e inspección 100% de materiales en todas las estaciones activas, almacén y áreas de trabajo en proceso.
+            <div>
+              <div class="flex items-center gap-2 justify-center md:justify-start">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-extrabold uppercase tracking-wider bg-white/20 text-white">
+                  Captura por Voz Inteligente
+                </span>
+                <span class="text-xs text-sky-100 hidden sm:inline"><i class="fa-regular fa-clock"></i> Meta: &lt; 3 minutos</span>
+              </div>
+              <h2 class="text-lg sm:text-2xl font-black mt-1">Dicta el Paro de Línea en Vivo</h2>
+              <p id="voice-status-text" class="text-xs sm:text-sm text-sky-100 mt-0.5">
+                Presiona el micrófono o prueba el ejemplo predefinido para autorrellenar los campos.
               </p>
             </div>
           </div>
-        </div>
 
-        <!-- FORMULARIO DE ACCIÓN DE CONTENCIÓN -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          <div class="lg:col-span-2">
-            <label for="accion_contencion" class="block text-xs font-bold text-slate-700 uppercase mb-1">Acción de Contención Inmediata</label>
-            <textarea id="accion_contencion" rows="3" placeholder="Describa las acciones tomadas para asegurar que no salgan piezas defectuosas..." class="w-full"></textarea>
+          <!-- Ecualizador y botón de ejemplo -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto justify-end">
+            <!-- Ecualizador Animado -->
+            <div id="sound-wave-anim" class="sound-wave hidden">
+              <div class="sound-bar"></div>
+              <div class="sound-bar"></div>
+              <div class="sound-bar"></div>
+              <div class="sound-bar"></div>
+              <div class="sound-bar"></div>
+            </div>
+
+            <!-- Botón para probar exactamente el ejemplo de voz requerido -->
+            <button id="test-voice-example-btn" class="w-full sm:w-auto px-3.5 py-2 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 border border-white/30 text-white backdrop-blur flex items-center justify-center gap-2 transition-all">
+              <i class="fa-solid fa-flask-vial text-yellow-300"></i>
+              <span>Probar Ejemplo de Voz</span>
+            </button>
           </div>
 
-          <div class="space-y-3 lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="sm:col-span-3 lg:col-span-1">
-              <label for="responsable_contencion" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Responsable</label>
-              <input type="text" id="responsable_contencion" placeholder="Nombre completo" class="w-full">
+        </div>
+
+        <!-- Transcripción en Vivo y Badges Extraídos -->
+        <div class="mt-4 pt-3 border-t border-white/20">
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-sky-200 flex-shrink-0">
+              <i class="fa-solid fa-quote-left text-xs mr-1"></i> Transcripción:
+            </span>
+            <p id="voice-transcript-live" class="text-xs sm:text-sm text-white/95 italic bg-black/15 p-2 rounded-lg flex-1 min-h-[36px]">
+              Presiona "Iniciar Dictado" y describe el paro...
+            </p>
+          </div>
+          <!-- Contenedor de campos mapeados en tiempo real -->
+          <div id="extracted-tags-container" class="mt-2.5 flex flex-wrap gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 1: DATOS GENERALES -->
+      <div id="sec-datos-generales" class="flex-card p-5 sm:p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-flex-blue text-white font-black text-xs flex items-center justify-center">1</span>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide">Datos Generales del Paro</h3>
+          </div>
+          <!-- Folio Oficial Badge -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 hidden sm:inline">Folio Audit:</span>
+            <input type="text" id="field-folio-fac" readonly class="text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-flex-blue dark:text-sky-400 px-2.5 py-1 rounded border border-slate-200 dark:border-slate-700 w-32 text-center">
+            <input type="hidden" id="field-folio-formato">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Fecha Automática -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Fecha (Automática)</label>
+            <input type="date" id="field-fecha" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Originador -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nombre del Originador</label>
+            <input type="text" id="field-originador" placeholder="Ej. José Narro" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Cliente -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Cliente</label>
+            <select id="field-cliente" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+              <option value="Cisco">Cisco</option>
+              <option value="Tesla">Tesla</option>
+              <option value="Apple">Apple</option>
+              <option value="Ford">Ford</option>
+              <option value="HP">HP</option>
+              <option value="Google">Google</option>
+              <option value="Medical Health">Medical Health</option>
+              <option value="General Electric">General Electric</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+
+          <!-- Turno -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Turno</label>
+            <select id="field-turno" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+              <option value="Turno 1">Turno 1 (Matutino)</option>
+              <option value="Turno 2">Turno 2 (Vespertino)</option>
+              <option value="Turno 3">Turno 3 (Nocturno)</option>
+              <option value="Turno Mixto">Turno Mixto / Especial</option>
+            </select>
+          </div>
+
+          <!-- Línea -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Línea de Producción</label>
+            <input type="text" id="field-linea" placeholder="Ej. B18, SMT-02, BE-01" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-bold text-flex-blue dark:text-sky-400 focus:ring-2 focus:ring-flex-blue focus:outline-none uppercase">
+          </div>
+
+          <!-- Proceso -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Proceso</label>
+            <select id="field-proceso" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none font-medium">
+              <option value="Ensamble Mecánico">Ensamble Mecánico / Manual</option>
+              <option value="SMT">SMT (Surface Mount Technology)</option>
+              <option value="Inserción Manual (PTH)">Inserción Manual (PTH / THT)</option>
+              <option value="Ola de Soldadura">Ola de Soldadura (Wave Soldering)</option>
+              <option value="Inspección SPI/AOI">Inspección SPI / AOI</option>
+              <option value="Pruebas Eléctricas (ICT/FCT)">Pruebas Eléctricas (ICT / FCT)</option>
+              <option value="Back-End">Back-End / Integración</option>
+              <option value="Empaque / Box Build">Empaque / Box Build</option>
+              <option value="Otro">Otro Proceso</option>
+            </select>
+          </div>
+
+          <!-- Ensamble -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Ensamble / Modelo</label>
+            <input type="text" id="field-ensamble" placeholder="Ej. Mainboard PCA Gen 4" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Hora de Paro -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-semibold text-slate-600 dark:text-slate-400">Hora de Paro</label>
+              <button id="btn-now-paro" type="button" class="text-[10px] text-flex-blue dark:text-sky-400 font-bold hover:underline">🕒 Ahora</button>
+            </div>
+            <input type="time" id="field-hora-paro" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Hora de Arranque -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-semibold text-slate-600 dark:text-slate-400">Hora de Arranque</label>
+              <button id="btn-now-arranque" type="button" class="text-[10px] text-flex-blue dark:text-sky-400 font-bold hover:underline">🕒 Ahora</button>
+            </div>
+            <input type="time" id="field-hora-arranque" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+        </div>
+
+        <!-- ====================================================== -->
+        <!-- CRONÓMETRO DE PARO EN VIVO Y CÁLCULO DE DOWNTIME         -->
+        <!-- ====================================================== -->
+        <div class="mt-4 p-4 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800/90 dark:to-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            
+            <!-- Cronómetro Digital en Vivo -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div class="flex items-center gap-3">
+                <div id="stopwatch-icon-box" class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-950/60 border border-red-200 dark:border-red-900 flex items-center justify-center text-red-600 dark:text-red-400 text-xl shadow-inner">
+                  <i class="fa-solid fa-stopwatch" id="stopwatch-icon"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">Cronómetro del Paro:</span>
+                    <span id="stopwatch-status" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Detenido</span>
+                  </div>
+                  <div class="flex items-baseline gap-2">
+                    <span id="stopwatch-display" class="font-mono text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-wider">00:00:00</span>
+                    <span class="text-[10px] text-slate-400 font-mono">(HH:MM:SS)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Controles del Cronómetro -->
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <button type="button" id="btn-timer-start" onclick="window.flexApp.startStopwatch()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow flex items-center gap-1.5 transition-all active:scale-95" title="Iniciar conteo de tiempo de paro">
+                  <i class="fa-solid fa-play"></i>
+                  <span>Iniciar</span>
+                </button>
+                <button type="button" id="btn-timer-pause" onclick="window.flexApp.pauseStopwatch()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow flex items-center gap-1.5 transition-all active:scale-95" title="Pausar conteo">
+                  <i class="fa-solid fa-pause"></i>
+                  <span>Pausar</span>
+                </button>
+                <button type="button" id="btn-timer-stop" onclick="window.flexApp.stopStopwatchAndSetArranque()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#005696] hover:bg-[#004578] text-white shadow flex items-center gap-1.5 transition-all active:scale-95" title="Detener cronómetro y registrar hora de arranque actual">
+                  <i class="fa-solid fa-stop"></i>
+                  <span>Marcar Arranque</span>
+                </button>
+                <button type="button" id="btn-timer-reset" onclick="window.flexApp.resetStopwatch()" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 flex items-center gap-1 transition-all" title="Reiniciar cronómetro a cero">
+                  <i class="fa-solid fa-rotate-left"></i>
+                  <span>Reiniciar</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Resumen Total Sin Producir y Semáforo de Criticidad -->
+            <div class="flex items-center justify-between sm:justify-end gap-3 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-200 dark:border-slate-700">
+              <span id="downtime-critical-badge" class="text-xs px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                PARO REGISTRADO
+              </span>
+              <div class="text-right">
+                <span id="downtime-minutes-display" class="text-xl sm:text-2xl font-black text-red-600 dark:text-red-400">0 min</span>
+                <span id="downtime-hours-display" class="text-xs text-slate-500 font-medium ml-1">(0.0 hrs)</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 2: DESCRIPCIÓN DEL PROBLEMA (5W2H) -->
+      <div id="sec-5w2h" class="flex-card p-5 sm:p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-flex-blue text-white font-black text-xs flex items-center justify-center">2</span>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide">Descripción del Problema (Metodología 5W2H)</h3>
+          </div>
+          <span class="text-xs text-slate-500 font-semibold hidden sm:inline">Definición clara y objetiva</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- What -->
+          <div class="md:col-span-2 lg:col-span-3">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+              What (¿Qué ocurrió exactamente? Síntoma / Falla) <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="field-w5-what" placeholder="Ej. Conector incorrecto detectado en tarjeta de potencia" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-medium focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Where -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Where (¿Dónde ocurrió? Estación / Fixture)</label>
+            <input type="text" id="field-w5-where" placeholder="Ej. Estación de Ensamble B18" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Who -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Who (¿Quién lo detectó / Quién reporta?)</label>
+            <input type="text" id="field-w5-who" placeholder="Ej. Calidad - Inspector de turno" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- When -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">When (¿Cuándo ocurrió? Momento del lote)</label>
+            <input type="text" id="field-w5-when" placeholder="Ej. Inicio de corrida / Cambio de lote" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Why -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Why (¿Por qué es un problema? Impacto)</label>
+            <input type="text" id="field-w5-why" placeholder="Ej. Riesgo de corto circuito y reclamo del cliente" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- How -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">How (¿Cómo se identificó? Inspección / Alarma)</label>
+            <input type="text" id="field-w5-how" placeholder="Ej. Verificación visual en estación e inspección QA" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- How Many -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">How Many (¿Cuánto? Cantidad afectada)</label>
+            <input type="text" id="field-w5-how-many" placeholder="Ej. 15 defectuosas de 250 inspeccionadas" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: INFORMACIÓN DEL DEFECTO, EVIDENCIA & ÁREAS INVOLUCRADAS -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Columna Izquierda (2/3): Datos del Defecto y Foto -->
+        <div class="lg:col-span-2 flex-card p-5 sm:p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-flex-blue text-white font-black text-xs flex items-center justify-center">3</span>
+              <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide">Datos del Defecto y Evidencia</h3>
+            </div>
+            <span class="text-xs text-slate-500">Trazabilidad Técnica</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Número de Parte (P/N)</label>
+              <input type="text" id="field-def-num-parte" placeholder="Ej. 37-10492-01" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none font-mono">
             </div>
 
             <div>
-              <label for="fecha_compromiso_contencion" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Fecha Compromiso</label>
-              <input type="date" id="fecha_compromiso_contencion" class="w-full">
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Documento y Revisión</label>
+              <input type="text" id="field-def-doc-rev" value="WI-CAL-61 Rev. D" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
             </div>
 
             <div>
-              <label for="unidades_inspeccionadas" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Unid. Inspeccionadas</label>
-              <input type="number" id="unidades_inspeccionadas" placeholder="0" class="w-full font-mono">
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Área o Estación Afectada</label>
+              <input type="text" id="field-def-estacion" placeholder="Ej. Estación de Ensamble B18" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Número de Serie (S/N)</label>
+              <input type="text" id="field-def-serie" placeholder="Ej. SN-FLEX-998214" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none font-mono">
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Comentarios Adicionales</label>
+              <input type="text" id="field-def-comentarios" placeholder="Observaciones de piso" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Adjuntar Evidencia Fotográfica -->
+          <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-camera text-flex-blue dark:text-sky-400"></i>
+                <span>Evidencia Fotográfica del Defecto (Opcional)</span>
+              </label>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+              <input type="file" id="photo-evidence-input" accept="image/*" capture="environment" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-flex-blue hover:file:bg-sky-100 dark:file:bg-sky-950 dark:file:text-sky-300">
+              
+              <!-- Preview de Foto -->
+              <div id="photo-preview-container" class="hidden flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-300 dark:border-slate-700 flex-shrink-0">
+                <img id="photo-preview-img" src="" alt="Evidencia" class="w-10 h-10 object-cover rounded">
+                <button type="button" id="photo-remove-btn" class="text-red-500 hover:text-red-700 p-1 text-xs" title="Eliminar foto">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- MATRIZ DE PURGAS POR ESTACIÓN -->
+        <!-- Columna Derecha (1/3): Áreas que Asisten al Paro -->
+        <div class="flex-card p-5 sm:p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+              <span class="w-7 h-7 rounded-lg bg-flex-blue text-white font-black text-xs flex items-center justify-center">4</span>
+              <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide">Áreas Involucradas</h3>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">Selecciona los departamentos que asisten al evento:</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2.5">
+              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                <input type="checkbox" value="Calidad" checked class="area-checkbox w-4 h-4 text-flex-blue rounded focus:ring-flex-blue">
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-certificate text-sky-600 mr-1.5"></i> Calidad</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                <input type="checkbox" value="Procesos" checked class="area-checkbox w-4 h-4 text-flex-blue rounded focus:ring-flex-blue">
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-gears text-indigo-600 mr-1.5"></i> Procesos</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                <input type="checkbox" value="Manufactura" checked class="area-checkbox w-4 h-4 text-flex-blue rounded focus:ring-flex-blue">
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-industry text-amber-600 mr-1.5"></i> Manufactura</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                <input type="checkbox" value="Pruebas" class="area-checkbox w-4 h-4 text-flex-blue rounded focus:ring-flex-blue">
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-microchip text-emerald-600 mr-1.5"></i> Pruebas (Test)</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                <input type="checkbox" value="Producto" class="area-checkbox w-4 h-4 text-flex-blue rounded focus:ring-flex-blue">
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-box-archive text-purple-600 mr-1.5"></i> Producto</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                <input type="checkbox" value="Mantenimiento" class="area-checkbox w-4 h-4 text-flex-blue rounded focus:ring-flex-blue">
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-wrench text-rose-600 mr-1.5"></i> Mantenimiento</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                <input type="checkbox" value="Otros" class="area-checkbox w-4 h-4 text-flex-blue rounded focus:ring-flex-blue">
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-ellipsis text-slate-500 mr-1.5"></i> Otros</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800">
+            <span class="text-[11px] text-slate-400">Los correos automáticos se dirigirán a estas áreas.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECCIÓN 4: ACCIÓN DE CONTENCIÓN -->
+      <div id="sec-contencion" class="flex-card p-5 sm:p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-flex-blue text-white font-black text-xs flex items-center justify-center">5</span>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide">Acción de Contención Inmediata</h3>
+          </div>
+          <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-shield-halved mr-1"></i> Blindaje de Calidad</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Descripción (2 columnas en tablet y desktop) -->
+          <div class="sm:col-span-2 lg:col-span-2">
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Descripción de la Contención</label>
+            <input type="text" id="field-cont-descripcion" placeholder="Ej. Inspección 100% de arneses y piezas en WIP. Purga de estación." class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Responsable (1 columna) -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Responsable</label>
+            <input type="text" id="field-cont-responsable" placeholder="Ej. José Narro" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Fecha Compromiso (1 columna) -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Fecha Compromiso</label>
+            <input type="date" id="field-cont-fecha" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Cantidad Inspeccionada -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Cantidad Inspeccionada</label>
+            <input type="number" id="field-cont-inspeccionada" value="250" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Cantidad con Defecto -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Cantidad con Defecto</label>
+            <input type="number" id="field-cont-defecto" value="15" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-red-600 dark:text-red-400 font-bold focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Cantidad Reparada -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Cantidad Reparada</label>
+            <input type="number" id="field-cont-reparada" value="15" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+
+          <!-- Scrap Generado -->
+          <div>
+            <label class="block text-xs font-bold text-red-600 dark:text-red-400 mb-1">Scrap Generado (Piezas)</label>
+            <input type="number" id="field-cont-scrap" value="0" class="w-full text-xs sm:text-sm rounded-lg border border-red-300 dark:border-red-900 bg-white dark:bg-slate-900 px-3 py-2 text-red-600 dark:text-red-400 font-black focus:ring-2 focus:ring-red-500 focus:outline-none">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 5: ANÁLISIS DE CAUSA RAÍZ (5 PORQUÉS & ISHIKAWA 6M) -->
+      <div id="sec-causa-raiz" class="flex-card p-5 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-flex-blue text-white font-black text-xs flex items-center justify-center">6</span>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide">Análisis de Causa Raíz (5 Porqués & Ishikawa 6M)</h3>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="toggle-ishikawa-btn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-50 text-flex-blue border border-sky-200 hover:bg-sky-100 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800 transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-diagram-project"></i>
+              <span>Desplegar Diagrama Ishikawa 6M</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 Porqués Guiados -->
         <div>
-          <h3 class="text-xs font-bold text-slate-700 uppercase mb-2 flex items-center justify-between">
-            <span>Matriz de Purga y Verificación por Estación</span>
-            <span class="text-[11px] text-slate-500 font-normal">Totales acumulados automáticos</span>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Metodología Guiada de los 5 Porqués:</label>
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] font-bold flex items-center justify-center text-slate-700 dark:text-slate-300 flex-shrink-0">1</span>
+              <input type="text" id="field-why-1" placeholder="¿Por qué ocurrió el paro? (Síntoma directo)" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] font-bold flex items-center justify-center text-slate-700 dark:text-slate-300 flex-shrink-0">2</span>
+              <input type="text" id="field-why-2" placeholder="¿Por qué? (Causa del paso 1)" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] font-bold flex items-center justify-center text-slate-700 dark:text-slate-300 flex-shrink-0">3</span>
+              <input type="text" id="field-why-3" placeholder="¿Por qué? (Causa del paso 2)" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] font-bold flex items-center justify-center text-slate-700 dark:text-slate-300 flex-shrink-0">4</span>
+              <input type="text" id="field-why-4" placeholder="¿Por qué? (Causa del paso 3)" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <input type="text" id="field-why-5" placeholder="¿Por qué? (Causa raíz sistémica final)" class="w-full text-xs rounded-lg border border-amber-400 dark:border-amber-600 bg-amber-50/50 dark:bg-amber-950/20 px-3 py-1.5 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Causa Raíz Validada & Categoría 6M -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-amber-700 dark:text-amber-400 mb-1">
+              <i class="fa-solid fa-bullseye mr-1"></i> Campo de Causa Raíz Validada <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="field-rca-conclusion" placeholder="Ej. Material mezclado por omisión de purga de línea en cambio de lote" class="w-full text-xs sm:text-sm rounded-lg border border-amber-300 dark:border-amber-800 bg-white dark:bg-slate-900 px-3 py-2 font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Categoría 6M</label>
+            <select id="field-rca-6m-categoria" class="w-full text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none font-semibold">
+              <option value="Material">Material</option>
+              <option value="Método">Método</option>
+              <option value="Maquinaria">Maquinaria</option>
+              <option value="Medición">Medición</option>
+              <option value="Medio Ambiente">Medio Ambiente</option>
+              <option value="Mano de Obra">Mano de Obra</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- DIAGRAMA ISHIKAWA INTERACTIVO (COLAPSABLE) -->
+        <div id="ishikawa-interactive-box" class="hidden pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-1.5">
+              <i class="fa-solid fa-fish text-flex-blue"></i>
+              <span>Diagrama de Espina de Pescado (Ishikawa 6M):</span>
+            </h4>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-sky-700 dark:text-sky-400 mb-0.5">1. Método</label>
+                <input type="text" id="ishikawa-metodo" placeholder="Instrucción de trabajo, setup sheet" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-amber-700 dark:text-amber-400 mb-0.5">2. Material</label>
+                <input type="text" id="ishikawa-material" placeholder="Variación de lote, componente, PCB" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-indigo-700 dark:text-indigo-400 mb-0.5">3. Maquinaria</label>
+                <input type="text" id="ishikawa-maquinaria" placeholder="Desgaste, feeder, calibración" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-emerald-700 dark:text-emerald-400 mb-0.5">4. Medición</label>
+                <input type="text" id="ishikawa-medicion" placeholder="Calibración sensor, criterio visual" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-teal-700 dark:text-teal-400 mb-0.5">5. Medio Ambiente</label>
+                <input type="text" id="ishikawa-medio-ambiente" placeholder="Temperatura, humedad, ESD" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-rose-700 dark:text-rose-400 mb-0.5">6. Mano de Obra</label>
+                <input type="text" id="ishikawa-mano-obra" placeholder="Entrenamiento, fatiga, rotación" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECCIÓN 6: ACCIONES CORRECTIVAS Y PREVENTIVAS -->
+      <div id="sec-acciones" class="flex-card p-5 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-flex-blue text-white font-black text-xs flex items-center justify-center">7</span>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide">Acciones Correctivas y Preventivas</h3>
+          </div>
+          <span class="text-xs text-slate-500 font-semibold hidden sm:inline">Cierre de Brechas</span>
+        </div>
+
+        <!-- Acción Correctiva 1 -->
+        <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Acción Correctiva 1 (Inmediata en Proceso)</label>
+            <input type="text" id="field-act-corr1-desc" placeholder="Ej. Implementar validación por escaneo obligatorio de P/N" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Responsable</label>
+            <input type="text" id="field-act-corr1-resp" placeholder="Ing. Procesos" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Fecha Compromiso</label>
+            <input type="date" id="field-act-corr1-fecha" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Acción Correctiva 2 -->
+        <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Acción Correctiva 2 (Estandarización)</label>
+            <input type="text" id="field-act-corr2-desc" placeholder="Ej. Re-entrenamiento a operadores en purga de línea" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Responsable</label>
+            <input type="text" id="field-act-corr2-resp" placeholder="Sup. Manufactura" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Fecha Compromiso</label>
+            <input type="date" id="field-act-corr2-fecha" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Acción Preventiva Sistémica -->
+        <div class="p-3 bg-indigo-50/50 dark:bg-indigo-950/20 rounded-xl border border-indigo-200 dark:border-indigo-900/60 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-indigo-900 dark:text-indigo-300 mb-1">Acción Sistémica Preventiva (Poka-Yoke / FMEA)</label>
+            <input type="text" id="field-act-prev-desc" placeholder="Ej. Diseñar poka-yoke físico en fixture para conector incompatible" class="w-full text-xs rounded-lg border border-indigo-300 dark:border-indigo-800 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Responsable</label>
+            <input type="text" id="field-act-prev-resp" placeholder="Ing. Producto" class="w-full text-xs rounded-lg border border-indigo-300 dark:border-indigo-800 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Fecha Compromiso</label>
+            <input type="date" id="field-act-prev-fecha" class="w-full text-xs rounded-lg border border-indigo-300 dark:border-indigo-800 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 8: APROBACIONES (MFG, CALIDAD, PROCESOS) -->
+      <div id="sec-aprobaciones" class="flex-card p-5 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-flex-blue text-white font-black text-xs flex items-center justify-center">8</span>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide">Aprobaciones</h3>
+          </div>
+          <span class="text-xs text-slate-500 font-semibold hidden sm:inline">Validación por Área y Número de Nómina</span>
+        </div>
+
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Registra el nombre del responsable y número de nómina de cada área para registrar la aprobación oficial del evento.
+        </p>
+
+        <!-- Cuadrícula con las 3 áreas obligatorias -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+          <!-- 1. MFG (Manufactura) -->
+          <div id="card-appr-mfg" class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-3 transition-colors shadow-sm">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-flex-blue dark:text-sky-400 uppercase tracking-wide">1. MFG (Manufactura)</span>
+                <span id="appr-status-mfg" class="text-[11px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 flex items-center gap-1">
+                  <span>🟡</span> <span>Pendiente</span>
+                </span>
+              </div>
+              <div class="space-y-2">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-0.5">Nombre del Responsable:</label>
+                  <input type="text" id="appr-name-mfg" placeholder="Ej. José Narro" value="José Narro" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-0.5">No. Nómina:</label>
+                  <input type="text" id="appr-nomina-mfg" placeholder="Ej. 102951" value="102951" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 font-mono focus:ring-2 focus:ring-flex-blue focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400">Fecha y Hora de Aprobación:</label>
+                  <p id="appr-time-mfg" class="text-[11px] font-mono text-slate-600 dark:text-slate-300 min-h-[16px]">-</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+              <button type="button" id="btn-approve-mfg" class="flex-1 py-1.5 px-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm flex items-center justify-center gap-1 transition-colors">
+                <i class="fa-solid fa-check text-[10px]"></i>
+                <span>Aprobar</span>
+              </button>
+              <button type="button" id="btn-reject-mfg" class="py-1.5 px-2 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition-colors" title="Rechazar">
+                <i class="fa-solid fa-xmark text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Calidad -->
+          <div id="card-appr-calidad" class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-3 transition-colors shadow-sm">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-flex-blue dark:text-sky-400 uppercase tracking-wide">2. Calidad</span>
+                <span id="appr-status-calidad" class="text-[11px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 flex items-center gap-1">
+                  <span>🟡</span> <span>Pendiente</span>
+                </span>
+              </div>
+              <div class="space-y-2">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-0.5">Nombre del Responsable:</label>
+                  <input type="text" id="appr-name-calidad" placeholder="Ej. Juan Pérez" value="Ing. Juan Pérez" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-0.5">No. Nómina:</label>
+                  <input type="text" id="appr-nomina-calidad" placeholder="Ej. 104829" value="104829" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 font-mono focus:ring-2 focus:ring-flex-blue focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400">Fecha y Hora de Aprobación:</label>
+                  <p id="appr-time-calidad" class="text-[11px] font-mono text-slate-600 dark:text-slate-300 min-h-[16px]">-</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+              <button type="button" id="btn-approve-calidad" class="flex-1 py-1.5 px-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm flex items-center justify-center gap-1 transition-colors">
+                <i class="fa-solid fa-check text-[10px]"></i>
+                <span>Aprobar</span>
+              </button>
+              <button type="button" id="btn-reject-calidad" class="py-1.5 px-2 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition-colors" title="Rechazar">
+                <i class="fa-solid fa-xmark text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Procesos -->
+          <div id="card-appr-procesos" class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-3 transition-colors shadow-sm">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-flex-blue dark:text-sky-400 uppercase tracking-wide">3. Procesos</span>
+                <span id="appr-status-procesos" class="text-[11px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 flex items-center gap-1">
+                  <span>🟡</span> <span>Pendiente</span>
+                </span>
+              </div>
+              <div class="space-y-2">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-0.5">Nombre del Responsable:</label>
+                  <input type="text" id="appr-name-procesos" placeholder="Ej. Roberto Silva" value="Ing. Roberto Silva" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-0.5">No. Nómina:</label>
+                  <input type="text" id="appr-nomina-procesos" placeholder="Ej. 108314" value="108314" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 font-mono focus:ring-2 focus:ring-flex-blue focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400">Fecha y Hora de Aprobación:</label>
+                  <p id="appr-time-procesos" class="text-[11px] font-mono text-slate-600 dark:text-slate-300 min-h-[16px]">-</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+              <button type="button" id="btn-approve-procesos" class="flex-1 py-1.5 px-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm flex items-center justify-center gap-1 transition-colors">
+                <i class="fa-solid fa-check text-[10px]"></i>
+                <span>Aprobar</span>
+              </button>
+              <button type="button" id="btn-reject-procesos" class="py-1.5 px-2 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition-colors" title="Rechazar">
+                <i class="fa-solid fa-xmark text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BOTONES DE CIERRE DE PARO & ACCIÓN PRINCIPAL (STICKY O INLINE) -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+        
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <!-- Asistente IA -->
+          <button type="button" id="btn-ai-assist" class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800 transition-colors flex items-center justify-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Analizar con IA (Causas y Acciones)</span>
+          </button>
+
+          <!-- Guardar Borrador -->
+          <button type="button" id="btn-save-draft" class="hidden sm:inline-flex px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            Guardar Borrador
+          </button>
+        </div>
+
+        <!-- BOTÓN PRINCIPAL: CERRAR PARO Y GENERAR ARCHIVOS -->
+        <button type="button" id="btn-close-stop" class="w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-extrabold bg-[#005696] hover:bg-[#004578] text-white shadow-xl hover:scale-105 active:scale-95 transition-transform flex items-center justify-center gap-2">
+          <i class="fa-solid fa-lock text-base"></i>
+          <span>Cerrar Paro y Generar Archivos</span>
+        </button>
+      </div>
+
+      <!-- Tarjeta de Resumen Ejecutivo IA (Generada dinámicamente) -->
+      <div id="ai-summary-card" class="hidden flex-card p-5 border-l-4 border-l-purple-600 bg-purple-50/40 dark:bg-purple-950/20">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-purple-800 dark:text-purple-300 flex items-center gap-1.5">
+            <i class="fa-solid fa-robot"></i>
+            <span>Resumen Ejecutivo Generado por IA para Gerencia:</span>
+          </h4>
+          <span id="ai-recurrence-alert" class="hidden text-[11px] font-bold text-amber-800 bg-amber-100 dark:bg-amber-950 dark:text-amber-300 px-2 py-0.5 rounded"></span>
+        </div>
+        <p id="ai-summary-card-text" class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed"></p>
+      </div>
+
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- TAB 2: DASHBOARD Y MÉTRICAS DE MANUFACTURA             -->
+    <!-- ====================================================== -->
+    <section id="tab-dashboard" class="tab-content hidden space-y-6">
+      
+      <!-- Encabezado del Dashboard -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-flex-blue dark:text-sky-400"></i>
+            <span>Dashboard Operativo de Paros de Línea</span>
+          </h2>
+          <p class="text-xs text-slate-500">Métricas en tiempo real, Pareto 80/20 y tendencias mensuales de planta</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold text-slate-500">Filtrar Línea:</span>
+          <select id="history-filter-line" class="text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 font-bold">
+            <option value="TODAS">Todas las Líneas</option>
+            <option value="B18">Línea B18</option>
+            <option value="SMT-02">Línea SMT-02</option>
+            <option value="B12">Línea B12</option>
+            <option value="BE-01">Línea BE-01</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="flex-card p-4 border-l-4 border-l-flex-blue">
+          <span class="text-xs font-semibold text-slate-500 uppercase">Total de Paros</span>
+          <p id="kpi-total-paros" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">4</p>
+          <span class="text-[11px] text-slate-400">Incidentes registrados</span>
+        </div>
+
+        <div class="flex-card p-4 border-l-4 border-l-red-500">
+          <span class="text-xs font-semibold text-slate-500 uppercase">Tiempo Muerto Acumulado</span>
+          <div class="flex items-baseline gap-1 mt-1">
+            <p id="kpi-tiempo-total" class="text-2xl sm:text-3xl font-black text-red-600 dark:text-red-400">255 min</p>
+            <span id="kpi-tiempo-hrs" class="text-xs font-bold text-slate-500">(4.3 hrs)</span>
+          </div>
+          <span class="text-[11px] text-slate-400">Downtime operativo</span>
+        </div>
+
+        <div class="flex-card p-4 border-l-4 border-l-amber-500">
+          <span class="text-xs font-semibold text-slate-500 uppercase">Piezas con Defecto</span>
+          <p id="kpi-defectos-total" class="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">51 pzas</p>
+          <span class="text-[11px] text-slate-400">Encontradas en contención</span>
+        </div>
+
+        <div class="flex-card p-4 border-l-4 border-l-red-500">
+          <span class="text-xs font-semibold text-red-600 dark:text-red-400 uppercase">Scrap Generado</span>
+          <p id="kpi-scrap-total" class="text-2xl sm:text-3xl font-black text-red-600 dark:text-red-400 mt-1">2 pzas</p>
+          <span class="text-[11px] text-slate-400">Control de merma</span>
+        </div>
+      </div>
+
+      <!-- Cuadrícula de Gráficos (Chart.js) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Gráfico 1: Paros por Línea -->
+        <div class="flex-card p-5">
+          <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-column text-flex-blue"></i>
+            <span>Total de Paros por Línea de Producción</span>
           </h3>
-          
-          <div class="overflow-x-auto rounded-lg border border-slate-200">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100 text-slate-700 uppercase font-semibold border-b border-slate-200">
-                <tr>
-                  <th class="py-2.5 px-3">Estación / Área</th>
-                  <th class="py-2.5 px-3 text-center">¿Aplica Purga?</th>
-                  <th class="py-2.5 px-3">Piezas Inspeccionadas</th>
-                  <th class="py-2.5 px-3">Piezas Rechazadas / Purga</th>
+          <div class="h-64 relative">
+            <canvas id="chart-lines"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 2: Paros por Cliente -->
+        <div class="flex-card p-5">
+          <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-pie text-sky-500"></i>
+            <span>Distribución de Paros por Cliente</span>
+          </h3>
+          <div class="h-64 relative">
+            <canvas id="chart-clients"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 3: Pareto de Defectos (80/20) -->
+        <div class="flex-card p-5 lg:col-span-2">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase flex items-center gap-1.5">
+              <i class="fa-solid fa-chart-area text-red-600"></i>
+              <span>Diagrama de Pareto de Defectos (Regla 80/20)</span>
+            </h3>
+            <span class="text-[11px] text-slate-400">Frecuencia y % Acumulado</span>
+          </div>
+          <div class="h-72 relative">
+            <canvas id="chart-pareto"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 4: Principales Causas Raíz (6M) -->
+        <div class="flex-card p-5">
+          <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-diagram-project text-purple-600"></i>
+            <span>Principales Causas Raíz (Categorías Ishikawa 6M)</span>
+          </h3>
+          <div class="h-64 relative">
+            <canvas id="chart-causes"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 5: Tendencias Mensuales -->
+        <div class="flex-card p-5">
+          <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-trend-up text-emerald-600"></i>
+            <span>Tendencias Mensuales de Incidentes</span>
+          </h3>
+          <div class="h-64 relative">
+            <canvas id="chart-trends"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 6: Paros por Turno (Requerido) -->
+        <div class="flex-card p-5">
+          <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-business-time text-amber-500"></i>
+            <span>Paros por Turno de Producción</span>
+          </h3>
+          <div class="h-64 relative">
+            <canvas id="chart-shifts"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- TAB 3: HISTORIAL DE PAROS & EXPORTACIÓN                -->
+    <!-- ====================================================== -->
+    <section id="tab-historial" class="tab-content hidden space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-flex-blue dark:text-sky-400"></i>
+            <span>Historial de Paros Registrados</span>
+          </h2>
+          <p class="text-xs text-slate-500">Base de datos local permanente con respaldo de auditoría oficial</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btn-export-history-excel" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow flex items-center gap-1.5 transition-colors">
+            <i class="fa-solid fa-file-excel"></i>
+            <span>Exportar Todo a Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Buscador y Filtros Multi-Criterio (Folio, Fecha, Línea, Cliente, Responsable) -->
+      <div class="p-3 bg-white dark:bg-[#131f37] rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div class="relative lg:col-span-2">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="history-search-input" placeholder="Buscar por folio, responsable o defecto..." class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 pl-9 pr-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+        </div>
+        <div>
+          <select id="history-filter-linea" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            <option value="">Todas las Líneas</option>
+            <option value="B18">Línea B18</option>
+            <option value="SMT-02">Línea SMT-02</option>
+            <option value="BE-01">Línea BE-01</option>
+            <option value="PTH-03">Línea PTH-03</option>
+          </select>
+        </div>
+        <div>
+          <select id="history-filter-cliente" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            <option value="">Todos los Clientes</option>
+            <option value="Cisco">Cisco</option>
+            <option value="Tesla">Tesla</option>
+            <option value="Apple">Apple</option>
+            <option value="Ford">Ford</option>
+            <option value="HP">HP</option>
+          </select>
+        </div>
+        <div>
+          <input type="date" id="history-filter-fecha" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 focus:ring-2 focus:ring-flex-blue focus:outline-none" title="Filtrar por fecha">
+        </div>
+      </div>
+
+      <!-- Tabla de Historial -->
+      <div class="flex-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 dark:bg-slate-800/80 text-[11px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                <th class="p-3">Folio</th>
+                <th class="p-3">Fecha</th>
+                <th class="p-3">Línea</th>
+                <th class="p-3">Cliente</th>
+                <th class="p-3">Downtime</th>
+                <th class="p-3">Descripción (What)</th>
+                <th class="p-3">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- TAB 4: CENTRO DE INTELIGENCIA ARTIFICIAL & REPORTES     -->
+    <!-- ====================================================== -->
+    <section id="tab-ia" class="tab-content hidden space-y-6">
+      <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles text-purple-600 dark:text-purple-400"></i>
+          <span>Centro de Inteligencia Artificial Industrial Flex</span>
+        </h2>
+        <p class="text-xs text-slate-500">Generador de reportes gerenciales para C-Level, detección de recurrencias y mitigación sistémica</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Tarjeta de Control IA -->
+        <div class="flex-card p-5 space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+            <i class="fa-solid fa-brain text-purple-600 text-lg"></i>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Capacidades del Modelo IA:</h3>
+          </div>
+
+          <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-400">
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+              <span><strong>Resumen Ejecutivo:</strong> Síntesis formal en lenguaje de manufactura para correos y minutas.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+              <span><strong>Sugerencia de Causas Raíz:</strong> Deducción técnica clasificada en las 6M de Ishikawa.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+              <span><strong>Acciones Correctivas:</strong> Recomendaciones basadas en estándares IPC-A-610 e ISO 9001.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+              <span><strong>Detección de Recurrencias:</strong> Alertas preventivas ante fallas repetitivas en la misma línea.</span>
+            </li>
+          </ul>
+
+          <div class="pt-3 border-t border-slate-200 dark:border-slate-800">
+            <button id="btn-copy-ai-report" class="w-full px-4 py-2.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white shadow flex items-center justify-center gap-2 transition-colors">
+              <i class="fa-solid fa-copy"></i>
+              <span>Copiar Reporte Gerencial</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Visor del Reporte para Gerencia -->
+        <div class="lg:col-span-2 flex-card p-5">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-file-invoice text-flex-blue"></i>
+              <span>Informe Oficial para Dirección de Operaciones & Calidad</span>
+            </h3>
+            <span class="text-[10px] font-mono bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 px-2 py-0.5 rounded font-bold">Generado en Vivo</span>
+          </div>
+
+          <pre id="ai-management-report-content" class="p-4 rounded-xl bg-slate-100 dark:bg-slate-900 font-mono text-[11px] sm:text-xs text-slate-800 dark:text-slate-200 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-[500px]">Cargando reporte ejecutivo...</pre>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- TAB 5: CONFIGURACIÓN INTEGRAL DEL SISTEMA DIGITAL      -->
+    <!-- ====================================================== -->
+    <section id="tab-configuracion" class="tab-content hidden space-y-6">
+      
+      <!-- Encabezado de Configuración -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-gear text-flex-blue dark:text-sky-400"></i>
+            <span>Configuración del Sistema Flex</span>
+          </h2>
+          <p class="text-xs text-slate-500">Gestión de usuarios, alertas de correo, almacenamiento local y responsables oficiales</p>
+        </div>
+        <button type="button" onclick="window.flexApp.saveSystemConfiguration()" class="px-5 py-2.5 rounded-xl text-xs font-black bg-flex-blue hover:bg-flex-blueDark text-white shadow-md flex items-center gap-2 transition-all active:scale-95">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Guardar Cambios</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- 1. ADMINISTRAR USUARIOS DEL SISTEMA -->
+        <div class="flex-card p-5 space-y-4 lg:col-span-2">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-sky-100 dark:bg-sky-950 text-flex-blue dark:text-sky-400 font-bold text-xs flex items-center justify-center">1</span>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Administrar Usuarios del Sistema</h3>
+            </div>
+            <span class="text-[11px] text-slate-400">Personal autorizado para captura y auditoría</span>
+          </div>
+
+          <!-- Formulario para Agregar Usuario -->
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Nombre Completo:</label>
+              <input type="text" id="cfg-user-name" placeholder="Ej. Ing. Mateo Ramos" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">No. de Nómina:</label>
+              <input type="text" id="cfg-user-nomina" placeholder="Ej. FLX-55420" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none font-mono">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Rol / Puesto:</label>
+              <input type="text" id="cfg-user-role" placeholder="Ej. Inspector de Calidad" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Área Asignada:</label>
+              <select id="cfg-user-area" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 focus:ring-2 focus:ring-flex-blue focus:outline-none">
+                <option value="Calidad">Calidad</option>
+                <option value="Procesos">Procesos</option>
+                <option value="Operaciones">Operaciones / Manufactura</option>
+                <option value="SSyMA">SSyMA</option>
+                <option value="RoHS">RoHS</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button type="button" onclick="window.flexApp.addNewUser()" class="w-full px-3 py-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow flex items-center justify-center gap-1.5 transition-colors">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Agregar Usuario</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabla de Usuarios Registrados -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-800/80 text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                  <th class="p-2.5">Nombre</th>
+                  <th class="p-2.5">No. Nómina</th>
+                  <th class="p-2.5">Rol / Puesto</th>
+                  <th class="p-2.5">Área</th>
+                  <th class="p-2.5">Estado</th>
+                  <th class="p-2.5 text-right">Acción</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-200 bg-white">
-                <tr>
-                  <td class="py-2 px-3 font-semibold text-slate-800">OBA (Out of Box Audit)</td>
-                  <td class="py-2 px-3 text-center"><input type="checkbox" id="purge_oba_applies" class="w-4 h-4 text-blue-600 rounded border-slate-300"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_oba_insp" placeholder="0" class="purge-inspeccionadas w-32 py-1 font-mono"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_oba_rech" placeholder="0" class="purge-rechazadas w-32 py-1 font-mono text-red-600"></td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-3 font-semibold text-slate-800">BKD (Breakdown / Subensamble)</td>
-                  <td class="py-2 px-3 text-center"><input type="checkbox" id="purge_bkd_applies" class="w-4 h-4 text-blue-600 rounded border-slate-300"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_bkd_insp" placeholder="0" class="purge-inspeccionadas w-32 py-1 font-mono"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_bkd_rech" placeholder="0" class="purge-rechazadas w-32 py-1 font-mono text-red-600"></td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-3 font-semibold text-slate-800">SMT (Superficie / Tableros)</td>
-                  <td class="py-2 px-3 text-center"><input type="checkbox" id="purge_smt_applies" class="w-4 h-4 text-blue-600 rounded border-slate-300"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_smt_insp" placeholder="0" class="purge-inspeccionadas w-32 py-1 font-mono"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_smt_rech" placeholder="0" class="purge-rechazadas w-32 py-1 font-mono text-red-600"></td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-3 font-semibold text-slate-800">Embarques / Almacén</td>
-                  <td class="py-2 px-3 text-center"><input type="checkbox" id="purge_emb_applies" class="w-4 h-4 text-blue-600 rounded border-slate-300"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_emb_insp" placeholder="0" class="purge-inspeccionadas w-32 py-1 font-mono"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_emb_rech" placeholder="0" class="purge-rechazadas w-32 py-1 font-mono text-red-600"></td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-3 font-semibold text-slate-800">Reparaciones / Rework</td>
-                  <td class="py-2 px-3 text-center"><input type="checkbox" id="purge_rep_applies" class="w-4 h-4 text-blue-600 rounded border-slate-300"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_rep_insp" placeholder="0" class="purge-inspeccionadas w-32 py-1 font-mono"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_rep_rech" placeholder="0" class="purge-rechazadas w-32 py-1 font-mono text-red-600"></td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-3 font-semibold text-slate-800">Otros (Proveedores / Tránsito)</td>
-                  <td class="py-2 px-3 text-center"><input type="checkbox" id="purge_otr_applies" class="w-4 h-4 text-blue-600 rounded border-slate-300"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_otr_insp" placeholder="0" class="purge-inspeccionadas w-32 py-1 font-mono"></td>
-                  <td class="py-2 px-3"><input type="number" id="purge_otr_rech" placeholder="0" class="purge-rechazadas w-32 py-1 font-mono text-red-600"></td>
-                </tr>
+              <tbody id="cfg-users-table-body" class="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+                <!-- Se poblará dinámicamente con storage -->
               </tbody>
-              <tfoot class="bg-slate-900 text-white font-bold border-t-2 border-slate-700">
-                <tr>
-                  <td colspan="2" class="py-2.5 px-3 uppercase text-right">Totales Acumulados:</td>
-                  <td class="py-2.5 px-3 font-mono text-emerald-400" id="total_purge_inspeccionadas">0</td>
-                  <td class="py-2.5 px-3 font-mono text-rose-400" id="total_purge_rechazadas">0</td>
-                </tr>
-              </tfoot>
             </table>
           </div>
         </div>
 
-        <!-- CONTADORES COMPLEMENTARIOS DE REPARACIÓN Y SCRAP -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-          <div class="p-3.5 bg-emerald-50 rounded-lg border border-emerald-200 flex items-center justify-between">
-            <div>
-              <label for="piezas_reparadas" class="block text-xs font-bold text-emerald-900 uppercase">Tarjetas / Piezas Reparadas</label>
-              <p class="text-[11px] text-emerald-700">Unidades recuperadas exitosamente</p>
-            </div>
-            <input type="number" id="piezas_reparadas" placeholder="0" class="w-28 py-1.5 font-mono text-emerald-800 font-bold border-emerald-300">
+        <!-- 2. CONFIGURAR CORREOS PARA ALERTAS AUTOMÁTICAS -->
+        <div class="flex-card p-5 space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+            <span class="w-6 h-6 rounded-lg bg-sky-100 dark:bg-sky-950 text-flex-blue dark:text-sky-400 font-bold text-xs flex items-center justify-center">2</span>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Correos para Alertas Automáticas</h3>
           </div>
 
-          <div class="p-3.5 bg-rose-50 rounded-lg border border-rose-200 flex items-center justify-between">
+          <div class="space-y-3">
             <div>
-              <label for="scrap_generado" class="block text-xs font-bold text-rose-900 uppercase">Scrap Generado (Desecho)</label>
-              <p class="text-[11px] text-rose-700">Piezas no recuperables enviadas a scrap</p>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Calidad (Receptor Primario):</label>
+              <input type="email" id="cfg-email-calidad" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
             </div>
-            <input type="number" id="scrap_generado" placeholder="0" class="w-28 py-1.5 font-mono text-rose-800 font-bold border-rose-300">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Ingeniería de Procesos:</label>
+              <input type="email" id="cfg-email-procesos" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Supervisión de Manufactura / Operaciones:</label>
+              <input type="email" id="cfg-email-manufactura" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Seguridad & Ambiental (SSyMA):</label>
+              <input type="email" id="cfg-email-ssyma" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Cumplimiento RoHS / Ambiental:</label>
+              <input type="email" id="cfg-email-rohs" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Gerencia de Planta / Operaciones:</label>
+              <input type="email" id="cfg-email-gerencia" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Plantilla de Asunto:</label>
+              <input type="text" id="cfg-email-subject" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-medium">
+            </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- SECCIÓN 4: ANÁLISIS DE CAUSA RAÍZ (CFT & 5 PORQUÉS) E ISHIKAWA 6M -->
-    <section class="industrial-card overflow-hidden">
-      <div class="bg-slate-800 text-white px-5 py-3 flex items-center justify-between border-b border-slate-700">
-        <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-          Sección 4: Análisis de Causa Raíz (CFT & 5 Porqués)
-        </h2>
-        <span class="text-xs text-slate-400 font-mono">Equipo Multifuncional (CFT)</span>
-      </div>
+        <!-- 3. CONFIGURAR RUTAS LOCALES DE GUARDADO (PDF / EXCEL) -->
+        <div class="flex-card p-5 space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+            <span class="w-6 h-6 rounded-lg bg-sky-100 dark:bg-sky-950 text-flex-blue dark:text-sky-400 font-bold text-xs flex items-center justify-center">3</span>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Rutas de Guardado Local & Exportación</h3>
+          </div>
 
-      <div class="p-5 space-y-5">
+          <div class="space-y-3.5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Carpeta Local de Destino para Archivos:</label>
+              <input type="text" id="cfg-export-folder" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono text-flex-blue dark:text-sky-400 font-bold">
+              <span class="text-[10px] text-slate-400 mt-1 block">Directorio corporativo predeterminado donde se almacenan reportes oficiales.</span>
+            </div>
 
-        <!-- BOTÓN DESPLEGABLE ACORDEÓN PARA LA GUÍA ISHIKAWA 6M -->
-        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-          <button id="btn-toggle-ishikawa" type="button" class="w-full bg-slate-50 hover:bg-slate-100 px-4 py-3 text-left text-xs font-bold text-slate-700 uppercase flex items-center justify-between transition-colors no-print">
-            <span class="flex items-center gap-2 text-blue-700">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-              </svg>
-              Guía de Apoyo Ishikawa 6M (Diagrama Causa-Efecto)
-            </span>
-            <svg id="ishikawa-chevron" class="w-4 h-4 text-slate-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </button>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Patrón de Nombre de Archivo Automático:</label>
+              <input type="text" id="cfg-filename-pattern" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+              <span class="text-[10px] text-slate-400 mt-1 block">Variables disponibles: {FOLIO}, {LINEA}, {FECHA}, {CLIENTE}.</span>
+            </div>
 
-          <div id="ishikawa-accordion-content" class="accordion-content bg-white p-4 border-t border-slate-200">
-            <p class="text-xs text-slate-600 mb-3 italic">
-              Consulte estas 6 categorías de manufactura para orientar el análisis de las causas posibles antes de formular los 5 Porqués:
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-              <div class="p-3 bg-blue-50/60 rounded border border-blue-200">
-                <h4 class="font-bold text-blue-900 mb-1">1. Medio Ambiente</h4>
-                <p class="text-slate-600 text-[11px]">Temperatura, humedad relativa, iluminación, limpieza (5S), ruido o condiciones del área.</p>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nombre por Defecto del Originador:</label>
+              <input type="text" id="cfg-default-originator" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2">
+            </div>
+
+            <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="cfg-auto-download-pdf" checked class="rounded text-flex-blue focus:ring-flex-blue w-4 h-4">
+                <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Descargar PDF automáticamente al cerrar paro de línea</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. CONFIGURAR ÁREAS DE APROBACIÓN Y RESPONSABLES -->
+        <div class="flex-card p-5 space-y-4 lg:col-span-2">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-sky-100 dark:bg-sky-950 text-flex-blue dark:text-sky-400 font-bold text-xs flex items-center justify-center">4</span>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Áreas de Aprobación y Responsables Predeterminados</h3>
+            </div>
+            <span class="text-[11px] text-slate-400">Valores por defecto para las firmas electrónicas automáticas</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- 1. MFG (Manufactura) -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-flex-blue dark:text-sky-400 flex items-center gap-1">
+                <i class="fa-solid fa-stamp"></i> 1. MFG (Manufactura)
+              </span>
+              <div>
+                <label class="block text-[10px] text-slate-500 mb-0.5">Responsable:</label>
+                <input type="text" id="cfg-appr-name-mfg" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1">
               </div>
-
-              <div class="p-3 bg-indigo-50/60 rounded border border-indigo-200">
-                <h4 class="font-bold text-indigo-900 mb-1">2. Método</h4>
-                <p class="text-slate-600 text-[11px]">Procedimientos de trabajo, hoja de instrucción de ensamble (WI), secuencia o estándares.</p>
-              </div>
-
-              <div class="p-3 bg-cyan-50/60 rounded border border-cyan-200">
-                <h4 class="font-bold text-cyan-900 mb-1">3. Maquinaria</h4>
-                <p class="text-slate-600 text-[11px]">Estado de equipos, desgaste de herramental, desalineación, falta de mantenimiento o fallas de feeder.</p>
-              </div>
-
-              <div class="p-3 bg-amber-50/60 rounded border border-amber-200">
-                <h4 class="font-bold text-amber-900 mb-1">4. Material</h4>
-                <p class="text-slate-600 text-[11px]">Variación de lote de proveedor, componentes fuera de especificación, daño físico o empaque.</p>
-              </div>
-
-              <div class="p-3 bg-emerald-50/60 rounded border border-emerald-200">
-                <h4 class="font-bold text-emerald-900 mb-1">5. Medición</h4>
-                <p class="text-slate-600 text-[11px]">Instrumentos fuera de calibración, gages, error de interpretación del operador o falta de plantilla.</p>
-              </div>
-
-              <div class="p-3 bg-purple-50/60 rounded border border-purple-200">
-                <h4 class="font-bold text-purple-900 mb-1">6. Mano de Obra</h4>
-                <p class="text-slate-600 text-[11px]">Capacitación, certificación vigente, fatiga, distracción o error de ensamble humano.</p>
+              <div>
+                <label class="block text-[10px] text-slate-500 mb-0.5">No. Nómina:</label>
+                <input type="text" id="cfg-appr-nomina-mfg" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 font-mono">
               </div>
             </div>
+
+            <!-- 2. Calidad -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-flex-blue dark:text-sky-400 flex items-center gap-1">
+                <i class="fa-solid fa-stamp"></i> 2. Calidad
+              </span>
+              <div>
+                <label class="block text-[10px] text-slate-500 mb-0.5">Responsable:</label>
+                <input type="text" id="cfg-appr-name-calidad" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-500 mb-0.5">No. Nómina:</label>
+                <input type="text" id="cfg-appr-nomina-calidad" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 font-mono">
+              </div>
+            </div>
+
+            <!-- 3. Procesos -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-flex-blue dark:text-sky-400 flex items-center gap-1">
+                <i class="fa-solid fa-stamp"></i> 3. Procesos
+              </span>
+              <div>
+                <label class="block text-[10px] text-slate-500 mb-0.5">Responsable:</label>
+                <input type="text" id="cfg-appr-name-procesos" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-500 mb-0.5">No. Nómina:</label>
+                <input type="text" id="cfg-appr-nomina-procesos" class="w-full text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 font-mono">
+              </div>
+            </div>
+
           </div>
-        </div>
-
-        <!-- FORMULARIO SECUENCIAL DE LOS 5 PORQUÉS -->
-        <div class="space-y-3">
-          <h3 class="text-xs font-bold text-slate-700 uppercase">Metodología de los 5 Porqués</h3>
-
-          <div class="flex items-start space-x-3">
-            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center">1</span>
-            <div class="w-full">
-              <label for="why_1" class="block text-xs font-semibold text-slate-600 mb-1">Por qué 1: ¿Por qué ocurrió la falla inicial?</label>
-              <input type="text" id="why_1" placeholder="Ej. El componente se colocó invertido en la tarjeta." class="w-full">
-            </div>
-          </div>
-
-          <div class="flex items-start space-x-3">
-            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center">2</span>
-            <div class="w-full">
-              <label for="why_2" class="block text-xs font-semibold text-slate-600 mb-1">Por qué 2: ¿Por qué ocurrió lo anterior?</label>
-              <input type="text" id="why_2" placeholder="Ej. El alimentador (feeder) vibró y desalineó el carrete." class="w-full">
-            </div>
-          </div>
-
-          <div class="flex items-start space-x-3">
-            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center">3</span>
-            <div class="w-full">
-              <label for="why_3" class="block text-xs font-semibold text-slate-600 mb-1">Por qué 3: ¿Por qué?</label>
-              <input type="text" id="why_3" placeholder="Ej. El perno de sujeción del feeder tenía desgaste acumulado." class="w-full">
-            </div>
-          </div>
-
-          <div class="flex items-start space-x-3">
-            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center">4</span>
-            <div class="w-full">
-              <label for="why_4" class="block text-xs font-semibold text-slate-600 mb-1">Por qué 4: ¿Por qué?</label>
-              <input type="text" id="why_4" placeholder="Ej. No se detectó el desgaste durante el mantenimiento preventivo." class="w-full">
-            </div>
-          </div>
-
-          <div class="flex items-start space-x-3">
-            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center">5</span>
-            <div class="w-full">
-              <label for="why_5" class="block text-xs font-semibold text-slate-600 mb-1">Por qué 5: ¿Por qué?</label>
-              <input type="text" id="why_5" placeholder="Ej. El checklist de mantenimiento no especificaba medición con gage de tolerancia." class="w-full">
-            </div>
-          </div>
-        </div>
-
-        <!-- RECUADRO DE CAUSA RAÍZ FINAL -->
-        <div class="p-4 bg-red-50 rounded-lg border-2 border-red-200">
-          <label for="causa_raiz_final" class="block text-xs font-bold text-red-900 uppercase mb-1">
-            🎯 Causa Raíz Final (Conclusión del Análisis CFT)
-          </label>
-          <textarea id="causa_raiz_final" rows="2" placeholder="Sintetice la Causa Raíz fundamental determinativa del fallo..." class="w-full border-red-300 focus:border-red-500 focus:ring-red-200 font-medium"></textarea>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 5: PLAN DE ACCIONES Y COBERTURA -->
-    <section class="industrial-card overflow-hidden">
-      <div class="bg-slate-800 text-white px-5 py-3 flex items-center justify-between border-b border-slate-700">
-        <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-purple-400"></span>
-          Sección 5: Plan de Acciones y Cobertura
-        </h2>
-        <span class="text-xs text-slate-400 font-mono">Plan Correctivo & Preventivo</span>
-      </div>
-
-      <div class="p-5 space-y-5">
-
-        <!-- TABLA / LISTADO DE ACCIONES -->
-        <div class="space-y-4">
-          <!-- ACCIÓN CORRECTIVA 1 -->
-          <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div class="md:col-span-2">
-              <label for="accion_corr_1" class="block text-xs font-bold text-slate-800 uppercase mb-1">Acción Correctiva 1</label>
-              <input type="text" id="accion_corr_1" placeholder="Descripción de la acción correctiva inmediata..." class="w-full">
-            </div>
-            <div>
-              <label for="resp_corr_1" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Responsable</label>
-              <input type="text" id="resp_corr_1" placeholder="Nombre" class="w-full">
-            </div>
-            <div>
-              <label for="fecha_corr_1" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Fecha Compromiso</label>
-              <input type="date" id="fecha_corr_1" class="w-full">
-            </div>
-          </div>
-
-          <!-- ACCIÓN CORRECTIVA 2 -->
-          <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div class="md:col-span-2">
-              <label for="accion_corr_2" class="block text-xs font-bold text-slate-800 uppercase mb-1">Acción Correctiva 2</label>
-              <input type="text" id="accion_corr_2" placeholder="Descripción de la segunda acción..." class="w-full">
-            </div>
-            <div>
-              <label for="resp_corr_2" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Responsable</label>
-              <input type="text" id="resp_corr_2" placeholder="Nombre" class="w-full">
-            </div>
-            <div>
-              <label for="fecha_corr_2" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Fecha Compromiso</label>
-              <input type="date" id="fecha_corr_2" class="w-full">
-            </div>
-          </div>
-
-          <!-- ACCIÓN SISTÉMICA / PREVENTIVA -->
-          <div class="p-3.5 bg-purple-50 rounded-lg border border-purple-200 grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div class="md:col-span-2">
-              <label for="accion_prev" class="block text-xs font-bold text-purple-900 uppercase mb-1">Acción Sistémica / Preventiva</label>
-              <input type="text" id="accion_prev" placeholder="Actualización de WI, FMEA, Control Plan o lección aprendida..." class="w-full border-purple-300">
-            </div>
-            <div>
-              <label for="resp_prev" class="block text-xs font-semibold text-purple-800 uppercase mb-1">Responsable</label>
-              <input type="text" id="resp_prev" placeholder="Nombre" class="w-full border-purple-300">
-            </div>
-            <div>
-              <label for="fecha_prev" class="block text-xs font-semibold text-purple-800 uppercase mb-1">Fecha Compromiso</label>
-              <input type="date" id="fecha_prev" class="w-full border-purple-300">
-            </div>
-          </div>
-        </div>
-
-        <!-- CHECKBOXES DE VALIDACIÓN -->
-        <div class="p-4 bg-slate-100 rounded-lg border border-slate-200 flex flex-col sm:flex-row items-center justify-around gap-4">
-          <label class="flex items-center space-x-3 cursor-pointer">
-            <input type="checkbox" id="cobertura_defecto" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
-            <span class="text-xs font-bold text-slate-800 uppercase">¿Existe cobertura documental para el defecto?</span>
-          </label>
-
-          <div class="h-4 w-px bg-slate-300 hidden sm:block"></div>
-
-          <label class="flex items-center space-x-3 cursor-pointer">
-            <input type="checkbox" id="applies_car" class="w-5 h-5 text-purple-600 rounded border-slate-300 focus:ring-purple-500">
-            <span class="text-xs font-bold text-purple-900 uppercase">¿Aplica CAR (Corrective Action Request)?</span>
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 6: BLOQUE DE FIRMAS DIGITALES -->
-    <section class="industrial-card overflow-hidden section-break-avoid">
-      <div class="bg-slate-800 text-white px-5 py-3 flex items-center justify-between border-b border-slate-700">
-        <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-sky-400"></span>
-          Sección 6: Bloque de Firmas Digitales e Validación
-        </h2>
-        <span class="text-xs text-slate-400 font-mono">Firmas Digitales Canvas (Touch/Mouse)</span>
-      </div>
-
-      <div class="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-
-        <!-- 1. RESPONSABLE DE CALIDAD -->
-        <div class="flex flex-col justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[11px] font-bold text-slate-700 uppercase">Calidad</span>
-              <span id="badge-status-calidad" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-100 text-slate-500 border border-slate-200">Pendiente</span>
-            </div>
-            <canvas id="canvas-calidad" class="sig-canvas w-full h-28 mb-2"></canvas>
-            <input type="text" id="nombre-calidad" placeholder="Nombre firmante..." class="w-full text-xs py-1">
-          </div>
-          <button id="btn-clear-calidad" type="button" class="mt-2 w-full py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-300 rounded hover:bg-slate-100 transition-colors no-print">
-            Limpiar Firma
-          </button>
-        </div>
-
-        <!-- 2. PROCESOS -->
-        <div class="flex flex-col justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[11px] font-bold text-slate-700 uppercase">Procesos</span>
-              <span id="badge-status-procesos" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-100 text-slate-500 border border-slate-200">Pendiente</span>
-            </div>
-            <canvas id="canvas-procesos" class="sig-canvas w-full h-28 mb-2"></canvas>
-            <input type="text" id="nombre-procesos" placeholder="Nombre firmante..." class="w-full text-xs py-1">
-          </div>
-          <button id="btn-clear-procesos" type="button" class="mt-2 w-full py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-300 rounded hover:bg-slate-100 transition-colors no-print">
-            Limpiar Firma
-          </button>
-        </div>
-
-        <!-- 3. ÁREA / ESTACIÓN -->
-        <div class="flex flex-col justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[11px] font-bold text-slate-700 uppercase">Área / Estación</span>
-              <span id="badge-status-estacion" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-100 text-slate-500 border border-slate-200">Pendiente</span>
-            </div>
-            <canvas id="canvas-estacion" class="sig-canvas w-full h-28 mb-2"></canvas>
-            <input type="text" id="nombre-estacion" placeholder="Nombre firmante..." class="w-full text-xs py-1">
-          </div>
-          <button id="btn-clear-estacion" type="button" class="mt-2 w-full py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-300 rounded hover:bg-slate-100 transition-colors no-print">
-            Limpiar Firma
-          </button>
-        </div>
-
-        <!-- 4. SSyMA -->
-        <div class="flex flex-col justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[11px] font-bold text-slate-700 uppercase">SSyMA</span>
-              <span id="badge-status-ssyma" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-100 text-slate-500 border border-slate-200">Pendiente</span>
-            </div>
-            <canvas id="canvas-ssyma" class="sig-canvas w-full h-28 mb-2"></canvas>
-            <input type="text" id="nombre-ssyma" placeholder="Nombre firmante..." class="w-full text-xs py-1">
-          </div>
-          <button id="btn-clear-ssyma" type="button" class="mt-2 w-full py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-300 rounded hover:bg-slate-100 transition-colors no-print">
-            Limpiar Firma
-          </button>
-        </div>
-
-        <!-- 5. RoHS -->
-        <div class="flex flex-col justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[11px] font-bold text-slate-700 uppercase">RoHS</span>
-              <span id="badge-status-rohs" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-100 text-slate-500 border border-slate-200">Pendiente</span>
-            </div>
-            <canvas id="canvas-rohs" class="sig-canvas w-full h-28 mb-2"></canvas>
-            <input type="text" id="nombre-rohs" placeholder="Nombre firmante..." class="w-full text-xs py-1">
-          </div>
-          <button id="btn-clear-rohs" type="button" class="mt-2 w-full py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-300 rounded hover:bg-slate-100 transition-colors no-print">
-            Limpiar Firma
-          </button>
         </div>
 
       </div>
+
+      <!-- Barra de Acción Final de Configuración -->
+      <div class="p-4 bg-white dark:bg-[#131f37] rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+        <span class="text-xs text-slate-500">Los cambios se guardan localmente y se aplican a los nuevos paros de línea y formatos PDF oficiales.</span>
+        <button type="button" onclick="window.flexApp.saveSystemConfiguration()" class="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-black bg-flex-blue hover:bg-flex-blueDark text-white shadow-md flex items-center justify-center gap-2 transition-all active:scale-95">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Guardar Configuración</span>
+        </button>
+      </div>
+
     </section>
 
   </main>
 
-  <!-- PIE DE PÁGINA INDUSTRIA -->
-  <footer class="mt-8 text-center text-xs text-slate-500 no-print">
-    <p>F-BX-CAL-61-01 Rev. D • Control de Registros de Calidad e Inspección de Paros de Línea • 2026</p>
+  <!-- ======================================================== -->
+  <!-- MODAL: ENVÍO AUTOMÁTICO DE CORREO A RESPONSABLES         -->
+  <!-- ======================================================== -->
+  <div id="email-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white dark:bg-[#131f37] rounded-2xl shadow-2xl max-w-xl w-full border border-slate-200 dark:border-slate-800 overflow-hidden animate-scale-up">
+      
+      <div class="bg-flex-blue p-4 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-paper-plane text-lg"></i>
+          <div>
+            <h3 class="text-sm font-bold">Despacho de Correo Automático</h3>
+            <p class="text-[11px] text-sky-200">Notificación inmediata a líderes de Calidad y Procesos</p>
+          </div>
+        </div>
+        <button id="btn-close-email-modal" class="text-white/80 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Para (Destinatarios Automáticos):</label>
+          <input type="text" id="email-to-input" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Asunto:</label>
+          <input type="text" id="email-subject-input" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-semibold">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Archivos Generados (Adjuntos):</label>
+          <input type="text" id="email-attachments-info" readonly class="w-full text-xs rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 px-3 py-2 font-mono">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Cuerpo del Correo:</label>
+          <textarea id="email-body-input" rows="7" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 font-sans leading-relaxed"></textarea>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+        <button id="btn-trigger-mailto" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-50 text-flex-blue hover:bg-sky-100 border border-sky-200 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800 flex items-center gap-1.5 transition-colors">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span>Abrir en Outlook / Mail</span>
+        </button>
+
+        <button id="btn-confirm-email-send" class="px-5 py-2 rounded-xl text-xs font-extrabold bg-flex-blue hover:bg-flex-blueDark text-white shadow transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-check"></i>
+          <span>Confirmar Envío y Registrar Auditoría</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: CONFIGURACIÓN DE GUARDADO Y RUTA LOCAL            -->
+  <!-- ======================================================== -->
+  <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white dark:bg-[#131f37] rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-800 overflow-hidden animate-scale-up">
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <h3 class="text-sm font-bold flex items-center gap-2">
+          <i class="fa-solid fa-gear text-flex-blue"></i>
+          <span>Configuración del Sistema Digital Flex</span>
+        </h3>
+        <button id="btn-close-settings" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Carpeta Local de Destino:</label>
+          <input type="text" id="setting-folder-path" value="C:\Flex\LineStops\2026\" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+          <span class="text-[10px] text-slate-400">Ruta configurable de guardado en la computadora.</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nombre por Defecto del Originador:</label>
+          <input type="text" id="setting-default-originator" value="José Narro" class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Google Gemini API Key (Opcional):</label>
+          <input type="password" id="setting-gemini-key" placeholder="AIzaSy..." class="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-mono">
+          <span class="text-[10px] text-slate-400">Si se omite, se usa el motor experto local integrado.</span>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
+        <button id="btn-save-settings" class="px-5 py-2 rounded-xl text-xs font-bold bg-flex-blue text-white hover:bg-flex-blueDark shadow transition-colors">
+          Guardar Ajustes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor flotante de notificaciones Toast -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- Pie de página -->
+  <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-3 bg-white dark:bg-[#131f37] text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
+      <span>Flex Line Stop Digital Control • Formato Oficial <strong>F-BX-CAL-61-01 Rev. D</strong></span>
+      <span>Diseñado para PC, Tablet y Celular • Control de Calidad Operativa</span>
+    </div>
   </footer>
 
-  <!-- SCRIPTS JAVASCRIPT -->
-  <script src="signature.js"></script>
-  <script src="app.js"></script>
+  <!-- Scripts Modulares de la Aplicación -->
+  <script src="js/storage.js"></script>
+  <script src="js/voice-recognition.js"></script>
+  <script src="js/signatures.js"></script>
+  <script src="js/export-pdf.js"></script>
+  <script src="js/export-excel.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
